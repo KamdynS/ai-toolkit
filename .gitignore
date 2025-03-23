@@ -1,0 +1,25 @@
+# Environment variables
+.env
+
+# Build artifacts
+bin/
+
+# Test artifacts
+test-input/
+test-output/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Editor directories and files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# OS specific files
+.DS_Store
+Thumbs.db

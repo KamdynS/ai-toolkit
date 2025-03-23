@@ -39,6 +39,9 @@ func (g *DocGenerator) GenerateDocumentation(ctx context.Context, modelName stri
 	// Extract and format the output
 	output := common.ExtractCode(result, getLanguageMarker(language))
 	
+	// For markdown documentation, we're good to go
+	// For other styles, we need to format differently in the calling code
+	
 	return output, nil
 }
 

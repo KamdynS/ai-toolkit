@@ -129,11 +129,21 @@ func generateFileDocumentation(ctx context.Context, generator *DocGenerator, fil
 		}
 	}
 
-	// If no output file specified, use the input file with .doc suffix
+	// If no output file specified, create one in the docs directory
 	if config.OutputFile == "" {
-		ext := filepath.Ext(filePath)
-		baseName := strings.TrimSuffix(filePath, ext)
-		config.OutputFile = fmt.Sprintf("%s.doc%s", baseName, ext)
+		// Create docs directory if it doesn't exist
+		docsDir := "docs"
+		if err := os.MkdirAll(docsDir, 0755); err != nil {
+			return fmt.Errorf("error creating docs directory: %v", err)
+		}
+		
+		// For single file documentation, use a standardized naming convention
+		relPath := filePath
+		// Convert path separators to underscores for flat structure
+		fileName := strings.ReplaceAll(relPath, "/", "_")
+		
+		// Always use .md extension for documentation files in the docs directory
+		config.OutputFile = filepath.Join(docsDir, fileName+".md")
 	}
 
 	if config.Verbose {
@@ -157,9 +167,23 @@ func generateFileDocumentation(ctx context.Context, generator *DocGenerator, fil
 		log.Printf("Generating documentation using model %s...", config.Model)
 	}
 	
+	// If we're generating markdown-style documentation, always use "markdown" style
+	if strings.HasSuffix(config.OutputFile, ".md") {
+		style = "markdown"
+	}
+	
 	documentation, err := generator.GenerateDocumentation(ctx, config.Model, config.Temperature, code, language, style, config.Verbose)
 	if err != nil {
 		return fmt.Errorf("error generating documentation: %v", err)
+	}
+
+	// If we're writing to markdown file, ensure it has the right format
+	if strings.HasSuffix(config.OutputFile, ".md") {
+		// Add file title if not already present
+		if !strings.HasPrefix(documentation, "# ") {
+			fileName := filepath.Base(filePath)
+			documentation = fmt.Sprintf("# Documentation for %s\n\n%s", fileName, documentation)
+		}
 	}
 
 	if config.Verbose {

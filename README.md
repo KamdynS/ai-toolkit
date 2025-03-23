@@ -24,7 +24,7 @@ Currently included tools:
 
 ```bash
 # Clone the repository
-git clone https://github.com/kamdyn/ai-toolkit.git
+git clone https://github.com/KamdynS/ai-toolkit.git
 cd ai-toolkit
 
 # Install the toolkit
